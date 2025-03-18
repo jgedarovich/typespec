@@ -20,7 +20,7 @@ export interface ServiceOptions {
 }
 
 export interface DiscriminatedOptions {
-  readonly envelope?: "object" | "none";
+  readonly envelope?: "object" | "none" | "allof";
   readonly discriminatorPropertyName?: string;
   readonly envelopePropertyName?: string;
 }

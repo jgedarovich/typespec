@@ -374,7 +374,7 @@ model DiscriminatedOptions {
    * How is the discriminated union serialized.
    * @default object
    */
-  envelope?: "object" | "none";
+  envelope?: "object" | "none" | "allof";
 
   /** Name of the discriminator property */
   discriminatorPropertyName?: string;

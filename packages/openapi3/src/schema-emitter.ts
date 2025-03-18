@@ -560,22 +560,39 @@ export class OpenAPI3SchemaEmitterBase<
     } else {
       const envelopeVariants = new Map<string, Model>();
 
-      for (const [name, variant] of union.variants) {
-        const envelopeModel = $.model.create({
-          name: union.type.name + capitalize(name),
-          properties: {
-            [union.options.discriminatorPropertyName]: $.modelProperty.create({
-              name: union.options.discriminatorPropertyName,
-              type: $.literal.createString(name),
-            }),
-            [union.options.envelopePropertyName]: $.modelProperty.create({
-              name: union.options.envelopePropertyName,
-              type: variant,
-            }),
-          },
-        });
+      if (union.options.envelope === "allof") {
+        for (const [name, variant] of union.variants) {
+            const envelopeModel = $.model.create({
+            name: union.type.name + capitalize(name),
+            properties: {
+                [union.options.discriminatorPropertyName]: $.modelProperty.create({
+                name: union.options.discriminatorPropertyName,
+                type: $.literal.createString(name),
+                }),
+            },
+            });
 
-        envelopeVariants.set(name, envelopeModel);
+            envelopeModel.baseModel = (variant as Model);
+            envelopeVariants.set(name, envelopeModel);
+        }
+      } else { // union.options.envelope === "object"
+        for (const [name, variant] of union.variants) {
+            const envelopeModel = $.model.create({
+            name: union.type.name + capitalize(name),
+            properties: {
+                [union.options.discriminatorPropertyName]: $.modelProperty.create({
+                name: union.options.discriminatorPropertyName,
+                type: $.literal.createString(name),
+                }),
+                [union.options.envelopePropertyName]: $.modelProperty.create({
+                name: union.options.envelopePropertyName,
+                type: variant,
+                }),
+            },
+            });
+
+            envelopeVariants.set(name, envelopeModel);
+        }
       }
 
       const items = new ArrayBuilder();
